@@ -322,7 +322,7 @@ export default function Home() {
             )}
             {genStatus === "done" && (
               <div className="text-xs text-center py-1" style={{ color: "var(--success)" }}>
-                ✓ PDF downloaded — {progress.total} certificate{progress.total !== 1 ? "s" : ""} generated
+                PDF downloaded — {progress.total} certificate{progress.total !== 1 ? "s" : ""} generated
               </div>
             )}
             {genStatus === "error" && (
@@ -346,8 +346,8 @@ export default function Home() {
               }}
             >
               {genStatus === "generating" ? <><Loader2 size={16} className="animate-spin" /> Generating PDF…</>
-                : genStatus === "done" ? <><RefreshCw size={16} /> Generate Another</>
-                : <><Download size={16} /> Generate &amp; Download Print-Ready PDF</>}
+                : genStatus === "done" ? <><RefreshCw size={16} /> Create Another</>
+                : <><Download size={16} /> Download PDF</>}
             </button>
             {!isReady && (
               <p className="text-xs text-center" style={{ color: "var(--muted)" }}>
