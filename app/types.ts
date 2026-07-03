@@ -8,7 +8,7 @@ export interface NameBox {
 export interface FontSettings {
   family: "Helvetica" | "Helvetica-Bold" | "Times-Roman" | "Times-Bold" | "Courier" | "Courier-Bold";
   size: number;
-  color: string; // hex
+  color: string; 
 }
 
 export type PageSize = "A4" | "Letter" | "Custom";
@@ -18,8 +18,8 @@ export interface PageSettings {
   size: PageSize;
   orientation: Orientation;
   copies: number;
-  customWidth?: number;  // mm
-  customHeight?: number; // mm
+  customWidth?: number;  
+  customHeight?: number; 
 }
 
 export interface GenerationProgress {
@@ -29,7 +29,6 @@ export interface GenerationProgress {
   message: string;
 }
 
-// PDF points per mm
 export const MM_TO_PT = 72 / 25.4;
 
 export const PAGE_SIZES: Record<PageSize, { w: number; h: number; unit: string }> = {

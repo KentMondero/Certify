@@ -1,6 +1,7 @@
 "use client";
 import { useState, useCallback, useRef } from "react";
 import Papa from "papaparse";
+import * as XLSX from "xlsx";
 import {
   FileImage, FileText, Type, Settings2, Download,
   Loader2, ChevronDown, Users, Layers, RefreshCw,
@@ -88,15 +89,32 @@ export default function Home() {
   }, []);
 
   const handleCsv = useCallback((file: File) => {
-    Papa.parse<Record<string, string>>(file, {
-      header: true, skipEmptyLines: true,
-      complete: (results) => {
-        const key = Object.keys(results.data[0] || {}).find(k => k.toLowerCase().includes("name"));
+    const isExcel = file.name.endsWith(".xlsx") || file.name.endsWith(".xls");
+
+    if (isExcel) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const data = new Uint8Array(e.target?.result as ArrayBuffer);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json<Record<string, string>>(sheet);
+        const key = Object.keys(rows[0] || {}).find(k => k.toLowerCase().includes("name"));
         if (!key) { alert("No 'Name' column found."); return; }
-        const parsed = results.data.map(r => r[key]).filter(Boolean);
+        const parsed = rows.map(r => String(r[key])).filter(Boolean);
         setNames(parsed); setCsvName(file.name);
-      },
-    });
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      Papa.parse<Record<string, string>>(file, {
+        header: true, skipEmptyLines: true,
+        complete: (results) => {
+          const key = Object.keys(results.data[0] || {}).find(k => k.toLowerCase().includes("name"));
+          if (!key) { alert("No 'Name' column found."); return; }
+          const parsed = results.data.map(r => r[key]).filter(Boolean);
+          setNames(parsed); setCsvName(file.name);
+        },
+      });
+    }
   }, []);
 
   const handleCustomFont = useCallback((file: File) => {
@@ -176,7 +194,7 @@ export default function Home() {
           </SectionCard>
 
           <SectionCard title="Student Names" icon={<FileText size={14} />}>
-            <DropZone accept=".csv,text/csv" label="Drop CSV file here"
+            <DropZone accept=".csv,text/csv,.xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" label="Drop CSV or Excel file here"
               sublabel={'Must have a "Name" column header'} onFile={handleCsv} fileName={csvName} />
             {names.length > 0 && (
               <div className="rounded-lg p-3 flex flex-col gap-2"
