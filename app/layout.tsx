@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Certify",
   description: "Create multiple certificates with one template",
   icons: {
-    icon: "/logo.png", 
+    icon: "/logo.png",
   },
 };
 
