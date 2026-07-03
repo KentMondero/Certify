@@ -4,7 +4,7 @@ import Papa from "papaparse";
 import * as XLSX from "xlsx";
 import {
   FileImage, FileText, Type, Settings2, Download,
-  Loader2, ChevronDown, Users, Layers, RefreshCw,
+  Loader2, ChevronDown, Users, RefreshCw,
 } from "lucide-react";
 import DropZone from "./components/DropZone";
 import TemplateEditor from "./components/TemplateEditor";
@@ -152,10 +152,7 @@ export default function Home() {
       <header className="px-6 py-4 flex items-center justify-between"
         style={{ borderBottom: "1px solid var(--border)", background: "var(--surface)" }}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, var(--accent), var(--accent2))" }}>
-            <Layers size={16} color="#fff" />
-          </div>
+          <img src="/logo.png" alt="Certify logo" className="w-8 h-8 rounded-lg object-contain" />
           <div>
             <h1 className="text-base font-semibold" style={{ color: "var(--text)" }}>Certify</h1>
             <p className="text-xs" style={{ color: "var(--muted)" }}>Upload template · add names · position · export PDF</p>

@@ -4,6 +4,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Certify",
   description: "Create multiple certificates with one template",
+  icons: {
+    icon: "/logo.png", 
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
