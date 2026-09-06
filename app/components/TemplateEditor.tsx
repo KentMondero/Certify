@@ -18,6 +18,8 @@ export default function TemplateEditor({ templateUrl, nameBox, onNameBoxChange, 
   const dragStart = useRef<{ x: number; y: number; box: NameBox } | null>(null);
   const dragMode = useRef<DragMode>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const textRef = useRef<HTMLSpanElement>(null);
+  const containerSize = useRef<{ w: number; h: number }>({ w: 1, h: 1 });
 
   const pct = (v: number, total: number) => (v / total) * 100;
 
@@ -89,6 +91,29 @@ export default function TemplateEditor({ templateUrl, nameBox, onNameBoxChange, 
     };
   }, [getPos, onNameBoxChange]);
 
+  // Calculate scaled font size based on box height relative to container
+const [scaledFontSize, setScaledFontSize] = useState(fontSettings.size);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const { offsetWidth, offsetHeight } = containerRef.current;
+    containerSize.current = { w: offsetWidth, h: offsetHeight };
+
+    // Box height in pixels on screen
+    const boxHeightPx = (nameBox.height / 100) * offsetHeight;
+    const boxWidthPx = (nameBox.width / 100) * offsetWidth;
+
+    // Scale factor: ratio of box height to total page height
+    // fontSettings.size is in PDF points; scale it to screen pixels proportionally
+    const heightScale = boxHeightPx / offsetHeight;
+    const widthScale = boxWidthPx / offsetWidth;
+    const scale = Math.min(heightScale, widthScale) * 6;
+
+    // Derive a preview size that reflects the real font size proportionally
+    const previewSize = Math.max(8, Math.min(fontSettings.size * scale, boxHeightPx * 0.75));
+    setScaledFontSize(previewSize);
+  }, [nameBox.height, nameBox.width, fontSettings.size, containerRef]);
+
   const hexToRgb = (hex: string) => {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
@@ -151,25 +176,27 @@ export default function TemplateEditor({ templateUrl, nameBox, onNameBoxChange, 
             backdropFilter: "blur(1px)",
           }}
         >
-          {/* Preview text */}
-          <span
-            style={{
-              color: hexToRgb(fontSettings.color),
-              fontFamily: fontSettings.family.startsWith("Helvetica") ? "Arial, sans-serif"
-                : fontSettings.family.startsWith("Times") ? "Georgia, serif"
-                : "Courier New, monospace",
-              fontSize: `clamp(8px, ${nameBox.height * 0.5}vh, ${nameBox.width * 0.2}vw)`,
-              fontWeight: fontSettings.family.includes("Bold") ? "700" : "400",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              maxWidth: "95%",
-              textAlign: "center",
-              pointerEvents: "none",
-            }}
-          >
-            {previewName}
-          </span>
+          {/* Preview text — size scales with box height and font size setting */}
+            <span
+              ref={textRef}
+              style={{
+                color: hexToRgb(fontSettings.color),
+                fontFamily: fontSettings.family.startsWith("Helvetica") ? "Arial, sans-serif"
+                  : fontSettings.family.startsWith("Times") ? "Georgia, serif"
+                  : "Courier New, monospace",
+                fontSize: `${scaledFontSize}px`,
+                fontWeight: fontSettings.family.includes("Bold") ? "700" : "400",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "95%",
+                textAlign: "center",
+                pointerEvents: "none",
+                transition: "font-size 0.1s ease",
+              }}
+            >
+              {previewName}
+            </span>
 
           {/* Move icon */}
           <div

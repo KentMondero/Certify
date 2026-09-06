@@ -155,7 +155,7 @@ export default function Home() {
           <img src="/logo.png" alt="Certify logo" className="w-8 h-8 rounded-lg object-contain" />
           <div>
             <h1 className="text-base font-semibold" style={{ color: "var(--text)" }}>Certify</h1>
-            <p className="text-xs" style={{ color: "var(--muted)" }}>Upload template · add names · position · export PDF</p>
+            <p className="text-xs" style={{ color: "var(--muted)" }}>Upload · Edit · Export</p>
           </div>
         </div>
         <span className="text-xs px-2 py-1 rounded-full"
